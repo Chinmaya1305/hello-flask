@@ -1,38 +1,49 @@
 pipeline {
   agent any
-
   environment {
     ARTIFACTS_PATH = "dist/*.tar.gz"
+    VENV_DIR = "venv"
   }
-
+  options {
+    timeout(time: 30, unit: 'MINUTES')
+  }
   stages {
-
     stage('Checkout') {
       steps {
-        // If job is configured with SCM and Jenkinsfile from repo, `checkout scm` will work.
-        // If using credentials for a private repo, configure credentials in Job SCM settings.
         checkout scm
       }
     }
 
-    stage('Prepare Python') {
+    stage('Setup venv') {
       steps {
-        sh 'python3 --version || python --version'
-        sh 'python3 -m pip --version || true'
-        sh 'python3 -m pip install --user pip || true'
+        sh '''
+          # create venv if missing
+          python3 -m venv ${VENV_DIR}
+          # ensure pip is available from venv
+          . ${VENV_DIR}/bin/activate
+          python -m pip install --upgrade pip setuptools wheel
+          pip --version
+        '''
       }
     }
 
     stage('Install deps') {
       steps {
-        // install into current workspace (not system)
-        sh 'python3 -m pip install --upgrade -r requirements.txt'
+        sh '''
+          . ${VENV_DIR}/bin/activate
+          # install into venv (no system packages touched)
+          pip install -r requirements.txt
+        '''
       }
     }
 
     stage('Unit tests') {
       steps {
-        sh 'pytest --maxfail=1 --disable-warnings -q --junitxml=reports/junit.xml'
+        sh '''
+          . ${VENV_DIR}/bin/activate
+          mkdir -p reports
+          pytest --maxfail=1 --disable-warnings -q --junitxml=reports/junit.xml
+        '''
       }
       post {
         always {
@@ -43,7 +54,11 @@ pipeline {
 
     stage('Package') {
       steps {
-        sh './package.sh'
+        sh '''
+          . ${VENV_DIR}/bin/activate
+          chmod +x package.sh
+          ./package.sh
+        '''
       }
     }
 
