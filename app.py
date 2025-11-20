@@ -1,8 +1,3 @@
-
----
-
-## Path: `app.py`
-```python
 from flask import Flask, jsonify
 import os
 
@@ -22,5 +17,6 @@ def health():
     return jsonify({"status":"ok"}), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    # listen on new requested port 4600
+    app.run(host="0.0.0.0", port=4600)
 

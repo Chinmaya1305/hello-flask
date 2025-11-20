@@ -8,7 +8,7 @@ spec:
     app: hello-flask
   ports:
     - protocol: TCP
-      port: 5000
-      targetPort: 5000
-      nodePort: 31555
+      port: 4600
+      targetPort: 4600
+      nodePort: 32666
 

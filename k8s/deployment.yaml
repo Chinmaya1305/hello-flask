@@ -19,17 +19,19 @@ spec:
         image: localhost:10090/hello-flask:latest
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 5000
+        - containerPort: 4600
         readinessProbe:
           httpGet:
             path: /health
-            port: 5000
-          initialDelaySeconds: 5
+            port: 4600
+          initialDelaySeconds: 10
           periodSeconds: 5
+          timeoutSeconds: 2
         livenessProbe:
           httpGet:
             path: /health
-            port: 5000
-          initialDelaySeconds: 15
+            port: 4600
+          initialDelaySeconds: 30
           periodSeconds: 20
+          timeoutSeconds: 2
 

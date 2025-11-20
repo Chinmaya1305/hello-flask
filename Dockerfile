@@ -3,7 +3,7 @@ FROM python:3.10-slim
 # set workdir
 WORKDIR /app
 
-# system deps (if any) - keep minimal
+# small system deps (minimal)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
  && rm -rf /var/lib/apt/lists/*
@@ -17,7 +17,9 @@ COPY . .
 
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
-EXPOSE 5000
+
+# expose new app port
+EXPOSE 4600
 
 CMD ["python", "app.py"]
 
