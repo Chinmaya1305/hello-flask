@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-.vscode/
-venv/
-dist/
-*.tar.gz
-*.log
-.idea/
-
